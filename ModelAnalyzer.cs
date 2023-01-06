@@ -83,20 +83,25 @@ internal class ModelAnalyzer
         }
         visited = visited.Add(structuredType);
 
-        foreach (var property in structuredType.NavigationProperties())
+        // Get all properties, not just navigation properties 
+        // This will generate navigation paths that navigate through a structural property
+        // (e.g.  /Suppliers/{ID}/Address/Country: in example 89)
+        // If the property type is neither complex nor entity, nothing will be (yield) returned in the switch statement
+        foreach (var property in structuredType.Properties())
         {
             var node = new Node(property.Name, property.Type.Definition);
             switch (property.Type.Definition)
             {
                 case IEdmStructuredType propertyStructuredType:
                     node.AddRange(Unfold(visited, propertyStructuredType));
+                    yield return node;
                     break;
 
                 case IEdmCollectionType collectionType:
                     node.AddRange(Unfold(visited, collectionType));
+                    yield return node;
                     break;
             }
-            yield return node;
         }
     }
 
