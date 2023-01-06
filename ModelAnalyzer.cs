@@ -82,9 +82,9 @@ internal class ModelAnalyzer
         visited = visited.Add(structuredType);
 
         // Get all properties, not just navigation properties 
-        // This will generate navigation paths that navigate through a structural property
-        // (e.g.  /Suppliers/{ID}/Address/Country: in example 89)
+        // This will generate navigation paths that navigate through a structural property (e.g.  /Suppliers/{ID}/Address/Country: in example 89)
         // If the property type is neither complex nor entity, nothing will be (yield) returned in the switch statement
+        // TODO: deal with type definitions
         foreach (var property in structuredType.Properties())
         {
             var node = new Node(property.Name, property.Type.Definition);
