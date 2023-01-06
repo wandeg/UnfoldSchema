@@ -4,108 +4,103 @@ internal class ModelAnalyzer
     {
     }
 
-    public IEnumerable<Path> Unfold(IEdmModel model)
+    public Node Create(IEdmModel model)
     {
-        return Unfold(ImmutableHashSet<IEdmType>.Empty, Path.Empty, model.EntityContainer);
+        return Unfold(ImmutableHashSet<IEdmType>.Empty, model.EntityContainer);
     }
 
-    private IEnumerable<Path> Unfold(ImmutableHashSet<IEdmType> visited, Path prefix, IEdmEntityContainer entityContainer)
+    private Node Unfold(ImmutableHashSet<IEdmType> visited, IEdmEntityContainer entityContainer)
     {
+        var node = new Node("", EdmUntypedStructuredType.Instance);
         foreach (var element in entityContainer.Elements)
         {
             switch (element)
             {
                 case IEdmEntitySet entitySet:
-                    foreach (var path in Unfold(visited, entitySet))
-                    {
-                        yield return path;
-                    }
+                    var child = Unfold(visited, entitySet);
+                    node.Add(child);
                     break;
                 case IEdmSingleton singleton:
-                    foreach (var path in Unfold(visited, singleton))
-                    {
-                        yield return path;
-                    }
+                    child = Unfold(visited, singleton);
+                    node.Add(child);
                     break;
                 default:
                     break;
             }
         }
+        return node;
     }
 
-    private IEnumerable<Path> Unfold(ImmutableHashSet<IEdmType> visited, IEdmSingleton singleton)
+    private Node Unfold(ImmutableHashSet<IEdmType> visited, IEdmSingleton singleton)
     {
-        var prefix = new Path(singleton.Name, singleton.Type);
-        yield return prefix;
+        var node = new Node(singleton.Name, singleton.Type);
 
         if (singleton.Type is IEdmEntityType singletonType)
         {
-            foreach (var path in Unfold(visited, singletonType))
+            foreach (var n in Unfold(visited, singletonType))
             {
-                yield return prefix.Append(path);
+                node.Add(n);
             }
         }
         else
         {
             throw new NotSupportedException("singleton type not a entity type");
         }
+
+        return node;
     }
 
-    private IEnumerable<Path> Unfold(ImmutableHashSet<IEdmType> visited, IEdmEntitySet entitySet)
+    private Node Unfold(ImmutableHashSet<IEdmType> visited, IEdmEntitySet entitySet)
     {
+        var node = new Node(entitySet.Name, entitySet.Type);
+
         if (entitySet.Type is IEdmCollectionType collectionType && collectionType.ElementType.Definition is IEdmEntityType elementType)
         {
-            var prefix = new Path(entitySet.Name, collectionType);
-            yield return prefix;
+            // var prefix = new Path(entitySet.Name, collectionType);
+            // yield return prefix;
 
-            foreach (var path in Unfold(visited, collectionType))
+            foreach (var n in Unfold(visited, collectionType))
             {
-                yield return prefix.Append(path);
+                node.Add(n);
             }
         }
         else
         {
             throw new NotSupportedException("EntitySet type not a collection of entity types");
         }
+
+        return node;
     }
 
 
-    private IEnumerable<Path> Unfold(ImmutableHashSet<IEdmType> visited, IEdmStructuredType structuredType)
+    private IEnumerable<Node> Unfold(ImmutableHashSet<IEdmType> visited, IEdmStructuredType structuredType)
     {
         // if we visited the type, return one last path and stop recursion
         if (visited.Contains(structuredType))
         {
-            yield return new Path("...", structuredType);
+            // yield return new Path("...", structuredType);
             yield break;
         }
         visited = visited.Add(structuredType);
 
         foreach (var property in structuredType.NavigationProperties())
         {
-            var navPropPath = new Path(property.Name, property.Type.Definition);
-            yield return navPropPath;
+            var node = new Node(property.Name, property.Type.Definition);
             switch (property.Type.Definition)
             {
                 case IEdmStructuredType propertyStructuredType:
-                    foreach (var path in Unfold(visited, propertyStructuredType))
-                    {
-                        yield return navPropPath.Append(path);
-                    }
-
+                    node.AddRange(Unfold(visited, propertyStructuredType));
                     break;
 
                 case IEdmCollectionType collectionType:
-                    foreach (var path in Unfold(visited, collectionType))
-                    {
-                        yield return navPropPath.Append(path);
-                    }
-
+                    node.AddRange(Unfold(visited, collectionType));
                     break;
             }
+            yield return node;
         }
     }
 
-    private IEnumerable<Path> Unfold(ImmutableHashSet<IEdmType> visited, IEdmCollectionType collectionType)
+    private IEnumerable<Node> Unfold(ImmutableHashSet<IEdmType> visited, IEdmCollectionType collectionType)
     {
         // if we visited the type, return one last path and stop recursion
         // // there is a bug that two structurally equal collection types can have different hash codes.
@@ -121,14 +116,11 @@ internal class ModelAnalyzer
         if (collectionType.ElementType.Definition is IEdmEntityType elementType)
         {
             var keys = elementType.Key();
-            var key = keys.Single();
-            var keyPath = new Path($"{{{key.Name}}}", elementType);
-            yield return keyPath;
+            var key = keys.Single(); // TODO: custom exception for multipart key
 
-            foreach (var path in Unfold(visited, elementType))
-            {
-                yield return keyPath.Append(path);
-            }
+            var node = new Node($"{{{key.Name}}}", elementType);
+            node.AddRange(Unfold(visited, elementType));
+            yield return node;
         }
         else
         {
