@@ -12,7 +12,7 @@ Console.WriteLine("analyzing... ");
 var tree = analyzer.Create(model);
 
 
-foreach (var path in tree.Unfold())
+foreach (var path in tree.Paths())
 {
     Console.WriteLine("{0}: \x1b[34m{1}\x1b[m", string.Join("/", path.Segments), Format(path.ResponseType));
 }
