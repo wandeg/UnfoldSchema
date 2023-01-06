@@ -1,4 +1,5 @@
 ﻿
+
 using var reader = XmlReader.Create("example89.csdl.xml");
 if (!CsdlReader.TryParse(reader, out var model, out var errors))
 {
@@ -14,7 +15,7 @@ var tree = analyzer.Create(model);
 
 foreach (var path in tree.Paths())
 {
-    Console.WriteLine("{0}: \x1b[34m{1}\x1b[m", string.Join("/", path.Segments), Format(path.ResponseType));
+    Console.WriteLine("{0} -> \x1b[34m{1}\x1b[m", path.Segments.SeparatedBy("/"), Format(path.ResponseType));
 }
 
 string Format(IEdmType type) => type switch
@@ -24,4 +25,3 @@ string Format(IEdmType type) => type switch
     IEdmComplexType complexType => complexType.Name,
     _ => type?.ToString() ?? "<null>",
 };
-
