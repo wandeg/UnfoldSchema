@@ -25,26 +25,26 @@
           <PropertyRef Name="id" />
         </Key>
         <Property Name="id" Type="Edm.Int32" Nullable="false" />
-        <Property Name="description" Type="Edm.String">
+        <Property Name="Description" Type="Edm.String">
           <Annotation Term="Core.IsLanguageDependent" />
 
         </Property>
 
-        <Property Name="releaseDate" Type="Edm.Date" />
-        <Property Name="discontinuedDate" Type="Edm.Date" />
-        <Property Name="rating" Type="Edm.Int32" />
-        <Property Name="price" Type="Edm.Decimal" Scale="variable">
+        <Property Name="ReleaseDate" Type="Edm.Date" />
+        <Property Name="DiscontinuedDate" Type="Edm.Date" />
+        <Property Name="Rating" Type="Edm.Int32" />
+        <Property Name="Price" Type="Edm.Decimal" Scale="variable">
           <Annotation Term="Measures.ISOCurrency" Path="Currency" />
 
         </Property>
 
-        <Property Name="currency" Type="Edm.String" MaxLength="3" />
+        <Property Name="Currency" Type="Edm.String" MaxLength="3" />
 
-        <NavigationProperty Name="category" Type="ODataDemo.Category"
-          Nullable="false" Partner="products" />
+        <NavigationProperty Name="Category" Type="ODataDemo.Category"
+          Nullable="false" Partner="Products" />
 
-        <NavigationProperty Name="supplier" Type="ODataDemo.Supplier"
-          Partner="products" />
+        <NavigationProperty Name="Supplier" Type="ODataDemo.Supplier"
+          Partner="Products" />
       </EntityType>
       <EntityType Name="Category">
         <Key>
@@ -103,7 +103,7 @@
 
       </ComplexType>
       <Function Name="ProductsByRating">
-        <Parameter Name="rating" Type="Edm.Int32" />
+        <Parameter Name="Rating" Type="Edm.Int32" />
 
         <ReturnType Type="Collection(ODataDemo.Product)" />
       </Function>
@@ -118,11 +118,11 @@
           <Annotation Term="Core.Description" String="Product Categories" />
 
         </EntitySet>
-        <EntitySet Name="suppliers" EntityType="ODataDemo.Supplier">
-          <NavigationPropertyBinding Path="products" Target="Products" />
+        <EntitySet Name="Suppliers" EntityType="ODataDemo.Supplier">
+          <NavigationPropertyBinding Path="Products" Target="Products" />
 
-          <NavigationPropertyBinding Path="address/country"
-            Target="countries" />
+          <NavigationPropertyBinding Path="Address/Country"
+            Target="Countries" />
 
           <Annotation Term="Core.OptimisticConcurrency">
 
@@ -135,14 +135,14 @@
           </Annotation>
 
         </EntitySet>
-        <Singleton Name="mainSupplier" Type="self.Supplier">
+        <Singleton Name="MainSupplier" Type="self.Supplier">
           <NavigationPropertyBinding Path="Products" Target="Products" />
 
           <Annotation Term="Core.Description" String="Primary Supplier" />
 
         </Singleton>
 
-        <EntitySet Name="countries" EntityType="ODataDemo.Country" />
+        <EntitySet Name="Countries" EntityType="ODataDemo.Country" />
 
         <FunctionImport Name="ProductsByRating" EntitySet="Products"
           Function="ODataDemo.ProductsByRating" />
