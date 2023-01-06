@@ -35,16 +35,14 @@ internal class ModelAnalyzer
     {
         var node = new Node(singleton.Name, singleton.Type);
 
-        if (singleton.Type is IEdmEntityType singletonType)
-        {
-            foreach (var n in Unfold(visited, singletonType))
-            {
-                node.Add(n);
-            }
-        }
-        else
+        if (!(singleton.Type is IEdmEntityType singletonType))
         {
             throw new NotSupportedException("singleton type not a entity type");
+        }
+
+        foreach (var n in Unfold(visited, singletonType))
+        {
+            node.Add(n);
         }
 
         return node;
@@ -107,30 +105,18 @@ internal class ModelAnalyzer
 
     private IEnumerable<Node> Unfold(ImmutableHashSet<IEdmType> visited, IEdmCollectionType collectionType)
     {
-        // if we visited the type, return one last path and stop recursion
-        // // there is a bug that two structurally equal collection types can have different hash codes.
-        // // https://github.com/OData/odata.net/issues/2589
-        // if (visited.Contains(collectionType) || visited.Contains(collectionType.ElementType.Definition))
-        // {
-        //     yield return new Path("...!", collectionType);
-        //     yield break;
-        // }
-        // // System.Console.WriteLine("inspect: {0} {1}", collectionType.FullTypeName(), string.Join(", ", visited.Select(v => v.FullTypeName())));
-        // // System.Console.WriteLine("inspect: {0} {1}", collectionType.GetHashCode(), string.Join(", ", visited.Select(v => v.GetHashCode())));
 
-        if (collectionType.ElementType.Definition is IEdmEntityType elementType)
-        {
-            var keys = elementType.Key();
-            var key = keys.Single(); // TODO: custom exception for multipart key
-
-            var node = new Node($"{{{key.Name}}}", elementType);
-            node.AddRange(Unfold(visited, elementType));
-            yield return node;
-        }
-        else
+        if (!(collectionType.ElementType.Definition is IEdmEntityType elementType))
         {
             throw new NotSupportedException("IEdmCollectionType's element is not a entity type");
         }
+
+        var keys = elementType.Key();
+        var key = keys.Single(); // TODO: custom exception for multipart key
+
+        var node = new Node($"{{{key.Name}}}", elementType);
+        node.AddRange(Unfold(visited, elementType));
+        yield return node;
     }
 }
 

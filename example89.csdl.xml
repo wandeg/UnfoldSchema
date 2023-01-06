@@ -135,7 +135,7 @@
           </Annotation>
 
         </EntitySet>
-        <Singleton Name="mainSupplier" Type="self.Supplier">
+        <Singleton Name="mainSupplier" Type="ODataDemo.Supplier">
           <NavigationPropertyBinding Path="Products" Target="Products" />
 
           <Annotation Term="Core.Description" String="Primary Supplier" />
