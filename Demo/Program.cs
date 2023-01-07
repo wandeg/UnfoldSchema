@@ -1,4 +1,4 @@
-﻿internal class Program
+﻿class Program
 {
     private static void Main(string[] args)
     {
@@ -18,10 +18,9 @@
         tree.WriteTo(Console.Out);
         Console.WriteLine();
 
-        foreach (var path in tree.Paths())
-        {
-            Console.WriteLine("{0} -> \x1b[34m{1}\x1b[m", path.Segments.SeparatedBy("/"), path.ResponseType.Format());
-        }
+        // foreach (var path in tree.Paths())
+        // {
+        //     Console.WriteLine("{0} -> \x1b[34m{1}\x1b[m", path.Segments.SeparatedBy("/"), path.ResponseType.Format());
+        // }
     }
 }
-

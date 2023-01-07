@@ -10,9 +10,9 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/UnfoldSchema/bin/Debug/net7.0/UnfoldSchema.dll",
+            "program": "${workspaceFolder}/Demo/bin/Debug/net7.0/Demo.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/UnfoldSchema",
+            "cwd": "${workspaceFolder}/Demo",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
             "console": "internalConsole",
             "stopAtEntry": false

@@ -1,6 +1,6 @@
 
 
-public static class NodeDisplay
+public static class TreeDisplay
 {
     // https://andrewlock.net/creating-an-ascii-art-tree-in-csharp/
     public static void WriteTo(this Node node, TextWriter writer)
@@ -28,7 +28,7 @@ public static class NodeDisplay
             writer.Write(CONFIG.Cross);
             indent += CONFIG.Vertical;
         }
-        writer.WriteLine(node.Name);
+        writer.WriteLine("{0} \x1b[34m{1}\x1b[m", node.Name, node.Type.Format());
 
         // Loop through the children recursively, passing in the
         // indent, and the isLast parameter
