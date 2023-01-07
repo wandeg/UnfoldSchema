@@ -3,7 +3,7 @@
 public record class Node(string Name, IEdmType Type)
 {
 
-    private readonly List<Node> Nodes = new List<Node>();
+    public List<Node> Nodes { get; } = new List<Node>();
 
 
     public void Add(Node node)
