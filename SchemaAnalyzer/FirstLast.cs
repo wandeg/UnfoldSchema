@@ -24,4 +24,19 @@ static class EnumerableExtensions
         state |= FirstLast.Last; // add the Last flag
         yield return (current, state);
     }
+
+    public static IEnumerable<(T, bool)> WithLast<T>(this IEnumerable<T> items)
+    {
+        var enumerator = items.GetEnumerator();
+        if (!enumerator.MoveNext()) { yield break; };
+        var isLast = false;
+        var current = enumerator.Current;
+        while (enumerator.MoveNext())
+        {
+            yield return (current, isLast);
+            current = enumerator.Current;
+        }
+        isLast = true; // add the isLast flag
+        yield return (current, isLast);
+    }
 }

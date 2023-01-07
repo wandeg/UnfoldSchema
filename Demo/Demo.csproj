@@ -17,4 +17,8 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\SchemaAnalyzer\SchemaAnalyzer.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -1,7 +1,7 @@
 
 
 
-static class EdmExtensions
+public static class EdmExtensions
 {
     public static string Format(this IEdmType type) => type switch
     {

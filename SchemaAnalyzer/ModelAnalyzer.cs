@@ -1,4 +1,4 @@
-internal class ModelAnalyzer
+public class ModelAnalyzer
 {
     public ModelAnalyzer()
     {
