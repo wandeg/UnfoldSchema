@@ -104,7 +104,7 @@ public class ModelAnalyzer
             if (ix >= 0)
             {
                 var tail = visited.Skip(ix + 1).Select(p => p.Item1).ToList();
-                node = new Node($"( {string.Join("/", tail)} )+", type);
+                node = new Node($"{{ ({string.Join("/", tail)})+ }}", type);
                 return true;
             }
         }
