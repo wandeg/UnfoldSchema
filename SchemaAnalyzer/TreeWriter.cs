@@ -40,7 +40,7 @@ public class TreeWriter : IDisposable
         }
         if (color)
         {
-            writer.WriteLine("{0} \x1b[34m{1}\x1b[m", node.Name, node.Type.Format());
+            writer.WriteLine("{0} \x1b[36m{1}\x1b[m", node.Name, node.Type.Format());
         }
         else
         {
