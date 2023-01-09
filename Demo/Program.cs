@@ -1,6 +1,4 @@
-﻿using Microsoft.OData.Edm;
-
-class Program
+﻿class Program
 {
     private static void Main(string[] args)
     {
@@ -14,29 +12,19 @@ class Program
             return;
         }
 
-
         Console.WriteLine("analyzing... ");
         Console.WriteLine();
-        var analyzer = new ModelAnalyzer();
-        var tree = analyzer.Create(model);
+        var analyzer = new ModelAnalyzer(model);
+        var tree = analyzer.Create();
         using var writer = new TreeWriter(Console.Out, true);
 
         writer.Display(tree);
 
-        foreach (var path in tree.Paths())
-        {
-            Console.WriteLine("{0}\n\t\x1b[34m{1}\x1b[m",
-                path.Segments.SeparatedBy("/"),
-                Signature(path));
-        }
+        // foreach (var path in tree.Paths())
+        // {
+        //     Console.WriteLine("{0}\n\t\x1b[34m{1}\x1b[m",
+        //         path.Segments.SeparatedBy("/"),
+        //         Signature(path));
+        // }
     }
-
-    static string Signature((IEnumerable<string> Segments, IEdmType ResponseType) path)
-    {
-        var parameters = string.Join(", ", path.Segments.Where(s => s.StartsWith('{')).Select(w => w.Trim('{', '}')));
-        var name = string.Join("Of", path.Segments.Where(s => !s.StartsWith('{')).Select(s => s.Capitalize()).Reverse());
-
-        return $"{name}({parameters}) -> {path.ResponseType.Format()}";
-    }
-
 }

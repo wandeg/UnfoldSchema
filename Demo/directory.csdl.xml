@@ -3,41 +3,41 @@
 
 
   <edmx:DataServices>
-    <Schema Namespace="ODataDemo">
+    <Schema Namespace="Directory">
 
       <EntityType Name="DirectoryObject">
         <Key>
           <PropertyRef Name="id" />
         </Key>
         <Property Name="id" Type="Edm.String" Nullable="false" />
-        <NavigationProperty Name="memberOf" Type="Collection(ODataDemo.Group)"
+        <NavigationProperty Name="memberOf" Type="Collection(Directory.Group)"
           Nullable="false" Partner="members" />
       </EntityType>
-      <EntityType Name="User" BaseType="ODataDemo.DirectoryObject">
+      <EntityType Name="User" BaseType="Directory.DirectoryObject">
         <Property Name="name" Type="Edm.Int32" Nullable="false" />
         <Property Name="createdDate" Type="Edm.Date" />
        
       </EntityType>
-      <EntityType Name="Group" BaseType="ODataDemo.DirectoryObject">
+      <EntityType Name="Group" BaseType="Directory.DirectoryObject">
         <Property Name="name" Type="Edm.String" Nullable="false">
           <Annotation Term="Core.IsLanguageDependent" />
 
         </Property>
         <Property Name="createdDate" Type="Edm.Date" />
-        <NavigationProperty Name="members" Type="Collection(ODataDemo.DirectoryObject)"
+        <NavigationProperty Name="members" Type="Collection(Directory.DirectoryObject)"
           Nullable="false" Partner="memberOf" />
       </EntityType>
 
       <EntityContainer Name="DemoService">
-        <EntitySet Name="users" EntityType="ODataDemo.User">
+        <EntitySet Name="users" EntityType="Directory.User">
           <NavigationPropertyBinding Path="memberOf" Target="directoryObjects" />
         </EntitySet>
 
-        <EntitySet Name="groups" EntityType="ODataDemo.Group">
+        <EntitySet Name="groups" EntityType="Directory.Group">
           <NavigationPropertyBinding Path="members" Target="directoryObjects" />
         </EntitySet>
 
-        <EntitySet Name="directoryObjects" EntityType="ODataDemo.DirectoryObject">
+        <EntitySet Name="directoryObjects" EntityType="Directory.DirectoryObject">
           <NavigationPropertyBinding Path="products" Target="Products" />
 
           <NavigationPropertyBinding Path="address/country"
