@@ -1,18 +1,20 @@
 
 
-public static class TreeDisplay
+public class TreeWriter : IDisposable
 {
-    public static void Display(this TextWriter writer, Node node)
+    public TreeWriter(TextWriter writer, bool v) { this.writer = writer; }
+
+    public void Display(Node node)
     {
         foreach (var (child, isLast) in node.Nodes.WithLast())
         {
-            WriteTo(child, writer, indent: "", isLast: isLast);
+            WriteNode(child, indent: "", isLast: isLast);
         }
         writer.WriteLine();
     }
 
     // adapted from https://andrewlock.net/creating-an-ascii-art-tree-in-csharp/
-    private static void WriteTo(Node node, TextWriter writer, string indent, bool isLast)
+    private void WriteNode(Node node, string indent, bool isLast)
     {
         // Print the provided pipes/spaces indent
         Console.Write(indent);
@@ -35,8 +37,13 @@ public static class TreeDisplay
         // indent, and the isLast parameter
         foreach (var (child, isLastChild) in node.Nodes.WithLast())
         {
-            WriteTo(child, writer, indent, isLastChild);
+            WriteNode(child, indent, isLastChild);
         }
+    }
+
+    public void Dispose()
+    {
+        ((IDisposable)writer).Dispose();
     }
 
     record struct Config(
@@ -53,4 +60,5 @@ public static class TreeDisplay
     };
 
     static Config CONFIG = CONFIGS[0];
+    private readonly TextWriter writer;
 }
