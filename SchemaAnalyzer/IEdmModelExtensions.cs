@@ -1,5 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-using Microsoft.OData.Edm;
 
 static class IEdmModelExtensions
 {
@@ -21,6 +19,20 @@ static class IEdmModelExtensions
         return false;
     }
 
+
+    public static bool TryFindAllDerivedTypes(this IEdmModel model, IEdmEntityType baseType, out IEnumerable<IEdmEntityType> subTypes)
+    {
+        subTypes = model.FindAllDerivedTypes(baseType).Cast<IEdmEntityType>();
+        return true;
+    }
+
+
+
+    public static bool TryFindAllDerivedTypes(this IEdmModel model, IEdmComplexType baseType, out IEnumerable<IEdmComplexType> subTypes)
+    {
+        subTypes = model.FindAllDerivedTypes(baseType).Cast<IEdmComplexType>();
+        return true;
+    }
 
     public static bool TryFindDeclaredEntitySubTypes(this IEdmModel model, string fqn, [MaybeNullWhen(false)] out IEnumerable<IEdmEntityType> subtypes)
     {

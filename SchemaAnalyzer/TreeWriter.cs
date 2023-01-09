@@ -1,5 +1,4 @@
 
-
 public class TreeWriter : IDisposable
 {
 
@@ -68,10 +67,10 @@ public class TreeWriter : IDisposable
     // Constants for indentation
     // https://unicode-table.com/en/blocks/box-drawing/
     static Config[] CONFIGS = new[]{
-        new Config(" +-"," +-"," | ", "   "),
-        new Config(" ├─"," └─"," │ ", "   "),
-        new Config(" ╠═"," ╚═"," ║ ", "   "),
-        new Config(" ╟─"," ╙─"," ║ ", "   "),
+        new Config("+- ", "+- ", "|  ", "   "),
+        new Config("├─ ", "└─ ", "│  ", "   "),
+        new Config("╠═ ", "╚═ ", "║  ", "   "),
+        new Config("╟─ ", "╙─ ", "║  ", "   "),
     };
 
     static Config CONFIG = CONFIGS[1];

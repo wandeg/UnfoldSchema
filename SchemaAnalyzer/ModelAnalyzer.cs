@@ -84,13 +84,11 @@ public class ModelAnalyzer
         }
         visited = visited.Add(structuredType);
 
-        if (Model.TryFindDeclaredEntitySubTypes("ODataDemo.DirectoryObject", out var subtypes))
+        foreach (var sub in Model.FindAllDerivedTypes(structuredType))
         {
-            foreach (var sub in subtypes)
-            {
-                var node = new Node(sub.FullTypeName(), sub);
-                yield return node;
-            }
+            var node = new Node(sub.FullTypeName(), sub);
+            node.AddRange(UnfoldStructuredType(visited, sub));
+            yield return node;
         }
 
         // Get all properties, not just navigation properties 
@@ -117,7 +115,6 @@ public class ModelAnalyzer
 
     private IEnumerable<Node> UnfoldCollection(ImmutableHashSet<IEdmType> visited, IEdmCollectionType collectionType)
     {
-
         if (!(collectionType.ElementType.Definition is IEdmEntityType elementType))
         {
             throw new NotSupportedException("IEdmCollectionType's element is not a entity type");
