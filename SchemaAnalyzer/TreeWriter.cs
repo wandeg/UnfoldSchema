@@ -2,7 +2,15 @@
 
 public class TreeWriter : IDisposable
 {
-    public TreeWriter(TextWriter writer, bool v) { this.writer = writer; }
+
+    private readonly TextWriter writer;
+    private readonly bool color;
+
+    public TreeWriter(TextWriter writer, bool color)
+    {
+        this.writer = writer;
+        this.color = color;
+    }
 
     public void Display(Node node)
     {
@@ -31,7 +39,14 @@ public class TreeWriter : IDisposable
             writer.Write(CONFIG.Child);
             indent += CONFIG.Vertical;
         }
-        writer.WriteLine("{0} \x1b[34m{1}\x1b[m", node.Name, node.Type.Format());
+        if (color)
+        {
+            writer.WriteLine("{0} \x1b[34m{1}\x1b[m", node.Name, node.Type.Format());
+        }
+        else
+        {
+            writer.WriteLine("{0} {1}", node.Name, node.Type.Format());
+        }
 
         // Loop through the children recursively, passing in the
         // indent, and the isLast parameter
@@ -59,6 +74,5 @@ public class TreeWriter : IDisposable
         new Config(" ╟─"," ╙─"," ║ ", "   "),
     };
 
-    static Config CONFIG = CONFIGS[0];
-    private readonly TextWriter writer;
+    static Config CONFIG = CONFIGS[1];
 }
