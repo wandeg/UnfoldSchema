@@ -2,11 +2,14 @@
 
 class Program
 {
+
+    const string DEFAULT_INPUT = "directory.csdl.xml";
+    // const string DEFAULT_INPUT = "example89.csdl.xml";
+
     private static void Main(string[] args)
     {
-        System.Console.WriteLine(args);
-        // var file = args.Length > 0 ? args[0] : "directory.csdl.xml";
-        var file = args.Length > 1 ? args[1] : "example89.csdl.xml";
+        // System.Console.Error.WriteLine(string.Join(" ", args));
+        var file = args.Length > 0 ? args[0] : DEFAULT_INPUT;
 
         using var reader = XmlReader.Create(file);
         if (!CsdlReader.TryParse(reader, out var model, out var errors))
@@ -18,24 +21,24 @@ class Program
         Console.WriteLine("analyzing... ");
         Console.WriteLine();
         var analyzer = new ModelAnalyzer(model);
-        var tree = analyzer.Create();
+        var tree = analyzer.CreateTree();
         using var writer = new TreeWriter(Console.Out, true);
 
         writer.Display(tree);
 
-        foreach (var path in tree.Paths())
-        {
-            Console.WriteLine("{0}", path.Segments.SeparatedBy("/"));
+        // foreach (var path in tree.Paths())
+        // {
+        //     Console.WriteLine("{0}", path.Segments.SeparatedBy("/"));
 
-            // Console.WriteLine("{0}\n\t\x1b[36m{1}\x1b[m",
-            //     path.Segments.SeparatedBy("/"),
-            //     Signature(path));
+        //     // Console.WriteLine("{0}\n\t\x1b[36m{1}\x1b[m",
+        //     //     path.Segments.SeparatedBy("/"),
+        //     //     Signature(path));
 
-            // Console.WriteLine("{0} \x1b[36m{1}\x1b[m",
-            // path.Segments.SeparatedBy("/"),
-            // path.ResponseType.Format());
+        //     // Console.WriteLine("{0} \x1b[36m{1}\x1b[m",
+        //     // path.Segments.SeparatedBy("/"),
+        //     // path.ResponseType.Format());
 
-        }
+        // }
     }
 
 

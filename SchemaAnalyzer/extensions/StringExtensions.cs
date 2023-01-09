@@ -21,4 +21,5 @@ public static class StringExtensions
 
     public static string Capitalize(this string word)
         => word[0..1].ToUpper() + word[1..];
+
 }

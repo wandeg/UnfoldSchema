@@ -7,88 +7,69 @@ public class ModelAnalyzer
         Model = model;
     }
 
-    public Node Create()
+    public Node CreateTree()
     {
-        return Unfold(ImmutableHashSet<IEdmType>.Empty, Model.EntityContainer);
+        return Unfold(Model.EntityContainer, ImmutableList<(string, IEdmType)>.Empty);
     }
 
-    private Node Unfold(ImmutableHashSet<IEdmType> visited, IEdmEntityContainer entityContainer)
+    private Node Unfold(IEdmEntityContainer entityContainer, ImmutableList<(string, IEdmType)> visited)
     {
         var node = new Node("", EdmUntypedStructuredType.Instance);
+
+        // instead of iterating twice over container elements via EntitySets and Singletons extension methods
+        // iterate once and do the type-check/cast inline in a switch
         foreach (var element in entityContainer.Elements)
         {
             switch (element)
             {
                 case IEdmEntitySet entitySet:
-                    var child = UnfoldEntitySet(visited, entitySet);
-                    node.Add(child);
+                    node.Add(UnfoldEntitySet(entitySet, visited));
                     break;
                 case IEdmSingleton singleton:
-                    child = UnfoldSingleton(visited, singleton);
-                    node.Add(child);
+                    node.Add(UnfoldSingleton(visited, singleton));
                     break;
                 default:
+                    // intentionally left blank. other container elements are not supported yet.
+                    Console.Error.WriteLine("ignoring {0} {1}", element.ContainerElementKind, element.Name);
                     break;
             }
         }
         return node;
     }
 
-    private Node UnfoldSingleton(ImmutableHashSet<IEdmType> visited, IEdmSingleton singleton)
+    private Node UnfoldSingleton(ImmutableList<(string, IEdmType)> visited, IEdmSingleton singleton)
     {
-        var node = new Node(singleton.Name, singleton.Type);
-
-        if (!(singleton.Type is IEdmEntityType singletonType))
+        if (singleton.Type is IEdmEntityType singletonType)
         {
-            throw new NotSupportedException("singleton type not a entity type");
+            return UnfoldStructuredType(singleton.Name, singletonType, visited);
         }
-
-        foreach (var n in UnfoldStructuredType(visited, singletonType))
-        {
-            node.Add(n);
-        }
-
-        return node;
+        throw new NotSupportedException("singleton type not a entity type");
     }
 
-    private Node UnfoldEntitySet(ImmutableHashSet<IEdmType> visited, IEdmEntitySet entitySet)
+    private Node UnfoldEntitySet(IEdmEntitySet entitySet, ImmutableList<(string, IEdmType)> visited)
     {
-        var node = new Node(entitySet.Name, entitySet.Type);
-
-        if (entitySet.Type is IEdmCollectionType collectionType && collectionType.ElementType.Definition is IEdmEntityType elementType)
+        if (entitySet.Type is IEdmCollectionType collectionType)
         {
-            // var prefix = new Path(entitySet.Name, collectionType);
-            // yield return prefix;
-
-            foreach (var n in UnfoldCollection(visited, collectionType))
-            {
-                node.Add(n);
-            }
+            return UnfoldCollectionType(entitySet.Name, collectionType, visited);
         }
-        else
-        {
-            throw new NotSupportedException("EntitySet type not a collection of entity types");
-        }
-
-        return node;
+        throw new NotSupportedException("EntitySet type not a collection of entity types");
     }
 
 
-    private IEnumerable<Node> UnfoldStructuredType(ImmutableHashSet<IEdmType> visited, IEdmStructuredType structuredType)
+    private Node UnfoldStructuredType(string segment, IEdmStructuredType structuredType, ImmutableList<(string, IEdmType)> visited)
     {
-        // if we visited the type, return one last path and stop recursion
-        if (visited.Contains(structuredType))
-        {
-            // yield return new Path("...", structuredType);
-            yield break;
-        }
-        visited = visited.Add(structuredType);
+        var node = new Node(segment, structuredType);
+        visited = visited.Add((segment, structuredType));
 
-        foreach (var sub in Model.FindAllDerivedTypes(structuredType))
+        if (BreakLoop(visited, out var loop))
         {
-            var node = new Node(sub.FullTypeName(), sub);
-            node.AddRange(UnfoldStructuredType(visited, sub));
-            yield return node;
+            node.Add(loop);
+            return node;
+        }
+
+        foreach (var subtype in Model.FindAllDerivedTypes(structuredType))
+        {
+            node.Add(UnfoldStructuredType(subtype.FullTypeName(), subtype, visited));
         }
 
         // Get all properties, not just navigation properties 
@@ -97,35 +78,59 @@ public class ModelAnalyzer
         // TODO: deal with type definitions
         foreach (var property in structuredType.Properties())
         {
-            var node = new Node(property.Name, property.Type.Definition);
+            // var node = new Node(property.Name, property.Type.Definition);
             switch (property.Type.Definition)
             {
                 case IEdmStructuredType propertyStructuredType:
-                    node.AddRange(UnfoldStructuredType(visited, propertyStructuredType));
-                    yield return node;
+                    node.Add(UnfoldStructuredType(property.Name, propertyStructuredType, visited));
                     break;
 
                 case IEdmCollectionType collectionType:
-                    node.AddRange(UnfoldCollection(visited, collectionType));
-                    yield return node;
+                    node.Add(UnfoldCollectionType(property.Name, collectionType, visited));
                     break;
             }
         }
+        return node;
     }
 
-    private IEnumerable<Node> UnfoldCollection(ImmutableHashSet<IEdmType> visited, IEdmCollectionType collectionType)
+    private bool BreakLoop(ImmutableList<(string, IEdmType)> visited, [MaybeNullWhen(false)] out Node node)
     {
+        // if we visited the type, return one last path and stop recursion
+        // this can only happen if there is al least two elements
+        if (visited.Count >= 2)
+        {
+            var type = visited.Last().Item2;
+            var ix = visited.FindLastIndex(visited.Count - 2, p => p.Item2 == type);
+            if (ix >= 0)
+            {
+                var tail = visited.Skip(ix + 1).Select(p => p.Item1).ToList();
+                node = new Node($"( {string.Join("/", tail)} )+", type);
+                return true;
+            }
+        }
+        node = default;
+        return false;
+    }
+
+    private Node UnfoldCollectionType(string segment, IEdmCollectionType collectionType, ImmutableList<(string, IEdmType)> visited)
+    {
+        var node = new Node(segment, collectionType);
+        visited = visited.Add((segment, collectionType));
+
         if (!(collectionType.ElementType.Definition is IEdmEntityType elementType))
         {
-            throw new NotSupportedException("IEdmCollectionType's element is not a entity type");
+            throw new NotSupportedException("IEdmCollectionType's element type is not a entity type");
         }
 
         var keys = elementType.Key();
-        var key = keys.Single(); // TODO: custom exception for multipart key
+        if (!keys.TryGetSingle(out var key))
+        {
+            throw new NotSupportedException("multipart keys are not supported");
+        }
 
-        var node = new Node($"{{{key.Name}}}", elementType);
-        node.AddRange(UnfoldStructuredType(visited, elementType));
-        yield return node;
+        node.Add(UnfoldStructuredType($"{{{key.Name}}}", elementType, visited));
+
+        return node;
     }
 }
 

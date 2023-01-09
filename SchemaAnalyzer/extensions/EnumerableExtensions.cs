@@ -2,11 +2,6 @@
 
 
 
-[Flags]
-enum FirstLast { None = 0, First = 1, Last = 2 }
-
-
-
 static class EnumerableExtensions
 {
     public static IEnumerable<(T, FirstLast)> WithFirstLast<T>(this IEnumerable<T> items)
@@ -39,4 +34,21 @@ static class EnumerableExtensions
         isLast = true; // add the isLast flag
         yield return (current, isLast);
     }
+
+    public static bool TryGetSingle<T>(this IEnumerable<T> items, [MaybeNullWhen(false)] out T single)
+    {
+        using var enumerator = items.GetEnumerator();
+        if (!enumerator.MoveNext())
+        {
+            single = default;
+            return false;
+        }
+        single = enumerator.Current;
+        return !enumerator.MoveNext();
+    }
 }
+
+
+
+[Flags]
+enum FirstLast { None = 0, First = 1, Last = 2 }

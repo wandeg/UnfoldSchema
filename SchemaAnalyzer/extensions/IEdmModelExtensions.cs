@@ -1,5 +1,5 @@
 
-static class IEdmModelExtensions
+public static class IEdmModelExtensions
 {
 
     public static bool TryFindDeclaredType(this IEdmModel model, string fqn, [MaybeNullWhen(false)] out IEdmType type)
@@ -45,4 +45,23 @@ static class IEdmModelExtensions
         subtypes = default;
         return false;
     }
+
+    public static bool TryGetCollectionElementType(this IEdmType type, [MaybeNullWhen(false)] out IEdmEntityType elementType)
+    {
+        if (type is IEdmCollectionType collectionType && collectionType.ElementType.Definition is IEdmEntityType et)
+        {
+            elementType = et;
+            return true;
+        }
+        elementType = default;
+        return false;
+    }
+
+    public static string Format(this IEdmType type) => type switch
+    {
+        IEdmCollectionType collectionType => $"[{Format(collectionType.ElementType.Definition)}]",
+        IEdmEntityType entityType => entityType.Name,
+        IEdmComplexType complexType => complexType.Name,
+        _ => type?.ToString() ?? "<null>",
+    };
 }
