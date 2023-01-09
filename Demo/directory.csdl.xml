@@ -16,8 +16,7 @@
       <EntityType Name="User" BaseType="ODataDemo.DirectoryObject">
         <Property Name="name" Type="Edm.Int32" Nullable="false" />
         <Property Name="createdDate" Type="Edm.Date" />
-        <NavigationProperty Name="memberOf" Type="Collection(ODataDemo.Group)"
-          Nullable="false" Partner="members" />
+       
       </EntityType>
       <EntityType Name="Group" BaseType="ODataDemo.DirectoryObject">
         <Property Name="name" Type="Edm.String" Nullable="false">
