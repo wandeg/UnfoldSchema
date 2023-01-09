@@ -2,16 +2,17 @@
 
 public static class TreeDisplay
 {
-    // https://andrewlock.net/creating-an-ascii-art-tree-in-csharp/
-    public static void WriteTo(this Node node, TextWriter writer)
+    public static void Display(this TextWriter writer, Node node)
     {
         foreach (var (child, isLast) in node.Nodes.WithLast())
         {
-            child.WriteTo(indent: "", isLast: isLast, writer);
+            WriteTo(child, writer, indent: "", isLast: isLast);
         }
+        writer.WriteLine();
     }
 
-    private static void WriteTo(this Node node, string indent, bool isLast, TextWriter writer)
+    // adapted from https://andrewlock.net/creating-an-ascii-art-tree-in-csharp/
+    private static void WriteTo(Node node, TextWriter writer, string indent, bool isLast)
     {
         // Print the provided pipes/spaces indent
         Console.Write(indent);
@@ -20,12 +21,12 @@ public static class TreeDisplay
         // calculate the indent that will be passed to its children
         if (isLast)
         {
-            writer.Write(CONFIG.Corner);
+            writer.Write(CONFIG.LastChild);
             indent += CONFIG.Space;
         }
         else
         {
-            writer.Write(CONFIG.Cross);
+            writer.Write(CONFIG.Child);
             indent += CONFIG.Vertical;
         }
         writer.WriteLine("{0} \x1b[34m{1}\x1b[m", node.Name, node.Type.Format());
@@ -34,19 +35,21 @@ public static class TreeDisplay
         // indent, and the isLast parameter
         foreach (var (child, isLastChild) in node.Nodes.WithLast())
         {
-            WriteTo(child, indent, isLastChild, writer);
+            WriteTo(child, writer, indent, isLastChild);
         }
     }
 
     record struct Config(
-        string Cross, string Corner, string Vertical, string Space)
+        string Child, string LastChild, string Vertical, string Space)
     { }
 
     // Constants for indentation
+    // https://unicode-table.com/en/blocks/box-drawing/
     static Config[] CONFIGS = new[]{
+        new Config(" +-"," +-"," | ", "   "),
         new Config(" ├─"," └─"," │ ", "   "),
         new Config(" ╠═"," ╚═"," ║ ", "   "),
-        new Config(" +-"," +-"," | ", "   "),
+        new Config(" ╟─"," ╙─"," ║ ", "   "),
     };
 
     static Config CONFIG = CONFIGS[0];

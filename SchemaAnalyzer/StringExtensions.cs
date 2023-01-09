@@ -17,4 +17,8 @@ public static class StringExtensions
         }
         return sb.ToString();
     }
+
+
+    public static string Capitalize(this string word)
+        => word[0..1].ToUpper() + word[1..];
 }

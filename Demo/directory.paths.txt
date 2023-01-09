@@ -1,0 +1,105 @@
+analyzing... 
+
+ +-users [User]
+ |  +-{id} [34mUser[m
+ |     +-memberOf [Group]
+ |     |  +-{id} [34mGroup[m
+ |     |     +-memberOf [Group]
+ |     |     |  +-{id} [34mGroup[m
+ |     |     +-members [DirectoryObject]
+ |     |        +-{id} [34mDirectoryObject[m
+ |     |           +-memberOf [Group]
+ |     |              +-{id} [34mGroup[m
+ |     +-memberOf [Group]
+ |        +-{id} [34mGroup[m
+ |           +-memberOf [Group]
+ |           |  +-{id} [34mGroup[m
+ |           +-members [DirectoryObject]
+ |              +-{id} [34mDirectoryObject[m
+ |                 +-memberOf [Group]
+ |                    +-{id} Group[m
+ +-groups [Group]
+ |  +-{id} [34mGroup[m
+ |     +-memberOf [Group]
+ |     |  +-{id} [34mGroup[m
+ |     +-members [DirectoryObject]
+ |        +-{id} [34mDirectoryObject[m
+ |           +-memberOf [Group]
+ |              +-{id} [34mGroup[m
+ +-directoryObjects [DirectoryObject]
+    +-{id} [34mDirectoryObject[m
+       +-memberOf [Group]
+          +-{id} [34mGroup[m
+             +-memberOf [Group]
+             |  +-{id} [34mGroup[m
+             +-members [DirectoryObject]
+                +-{id} [34mDirectoryObject[m
+
+/users
+	[34mUsers() -> [User]
+/users/{id}
+	[34mUsers(id) -> User[m
+/users/{id}/memberOf
+	[34mMemberOfOfUsers(id) -> [Group]
+/users/{id}/memberOf/{id}
+	[34mMemberOfOfUsers(id, id) -> Group[m
+/users/{id}/memberOf/{id}/memberOf
+	[34mMemberOfOfMemberOfOfUsers(id, id) -> [Group]
+/users/{id}/memberOf/{id}/memberOf/{id}
+	[34mMemberOfOfMemberOfOfUsers(id, id, id) -> Group[m
+/users/{id}/memberOf/{id}/members
+	[34mMembersOfMemberOfOfUsers(id, id) -> [DirectoryObject]
+/users/{id}/memberOf/{id}/members/{id}
+	[34mMembersOfMemberOfOfUsers(id, id, id) -> DirectoryObject[m
+/users/{id}/memberOf/{id}/members/{id}/memberOf
+	[34mMemberOfOfMembersOfMemberOfOfUsers(id, id, id) -> [Group]
+/users/{id}/memberOf/{id}/members/{id}/memberOf/{id}
+	[34mMemberOfOfMembersOfMemberOfOfUsers(id, id, id, id) -> Group[m
+/users/{id}/memberOf
+	[34mMemberOfOfUsers(id) -> [Group]
+/users/{id}/memberOf/{id}
+	[34mMemberOfOfUsers(id, id) -> Group[m
+/users/{id}/memberOf/{id}/memberOf
+	[34mMemberOfOfMemberOfOfUsers(id, id) -> [Group]
+/users/{id}/memberOf/{id}/memberOf/{id}
+	[34mMemberOfOfMemberOfOfUsers(id, id, id) -> Group[m
+/users/{id}/memberOf/{id}/members
+	[34mMembersOfMemberOfOfUsers(id, id) -> [DirectoryObject]
+/users/{id}/memberOf/{id}/members/{id}
+	[34mMembersOfMemberOfOfUsers(id, id, id) -> DirectoryObject[m
+/users/{id}/memberOf/{id}/members/{id}/memberOf
+	[34mMemberOfOfMembersOfMemberOfOfUsers(id, id, id) -> [Group]
+/users/{id}/memberOf/{id}/members/{id}/memberOf/{id}
+	[34mMemberOfOfMembersOfMemberOfOfUsers(id, id, id, id) -> Group[m
+/groups
+	[34mGroups() -> [Group]
+/groups/{id}
+	[34mGroups(id) -> Group[m
+/groups/{id}/memberOf
+	[34mMemberOfOfGroups(id) -> [Group]
+/groups/{id}/memberOf/{id}
+	[34mMemberOfOfGroups(id, id) -> Group[m
+/groups/{id}/members
+	[34mMembersOfGroups(id) -> [DirectoryObject]
+/groups/{id}/members/{id}
+	[34mMembersOfGroups(id, id) -> DirectoryObject[m
+/groups/{id}/members/{id}/memberOf
+	[34mMemberOfOfMembersOfGroups(id, id) -> [Group]
+/groups/{id}/members/{id}/memberOf/{id}
+	[34mMemberOfOfMembersOfGroups(id, id, id) -> Group[m
+/directoryObjects
+	[34mDirectoryObjects() -> [DirectoryObject]
+/directoryObjects/{id}
+	[34mDirectoryObjects(id) -> DirectoryObject[m
+/directoryObjects/{id}/memberOf
+	[34mMemberOfOfDirectoryObjects(id) -> [Group]
+/directoryObjects/{id}/memberOf/{id}
+	[34mMemberOfOfDirectoryObjects(id, id) -> Group[m
+/directoryObjects/{id}/memberOf/{id}/memberOf
+	[34mMemberOfOfMemberOfOfDirectoryObjects(id, id) -> [Group]
+/directoryObjects/{id}/memberOf/{id}/memberOf/{id}
+	[34mMemberOfOfMemberOfOfDirectoryObjects(id, id, id) -> Group[m
+/directoryObjects/{id}/memberOf/{id}/members
+	[34mMembersOfMemberOfOfDirectoryObjects(id, id) -> [DirectoryObject]
+/directoryObjects/{id}/memberOf/{id}/members/{id}
+	[34mMembersOfMemberOfOfDirectoryObjects(id, id, id) -> DirectoryObject[m

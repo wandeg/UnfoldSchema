@@ -22,9 +22,9 @@
     <Schema Namespace="ODataDemo">
       <EntityType Name="Product" HasStream="true">
         <Key>
-          <PropertyRef Name="id" />
+          <PropertyRef Name="productId" />
         </Key>
-        <Property Name="id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="productId" Type="Edm.Int32" Nullable="false" />
         <Property Name="description" Type="Edm.String">
           <Annotation Term="Core.IsLanguageDependent" />
 
@@ -48,9 +48,9 @@
       </EntityType>
       <EntityType Name="Category">
         <Key>
-          <PropertyRef Name="id" />
+          <PropertyRef Name="categoryId" />
         </Key>
-        <Property Name="id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="categoryId" Type="Edm.Int32" Nullable="false" />
         <Property Name="name" Type="Edm.String" Nullable="false">
           <Annotation Term="Core.IsLanguageDependent" />
 
@@ -63,9 +63,9 @@
       </EntityType>
       <EntityType Name="Supplier">
         <Key>
-          <PropertyRef Name="id" />
+          <PropertyRef Name="supplierId" />
         </Key>
-        <Property Name="id" Type="Edm.String" Nullable="false" />
+        <Property Name="supplierId" Type="Edm.String" Nullable="false" />
         <Property Name="name" Type="Edm.String" />
         <Property Name="address" Type="ODataDemo.Address" Nullable="false" />
         <Property Name="concurrency" Type="Edm.Int32" Nullable="false" />
