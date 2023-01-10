@@ -1,5 +1,4 @@
-﻿using Microsoft.OData.Edm;
-
+﻿
 class Program
 {
 
@@ -59,8 +58,8 @@ class Args
 {
 
 
-    const string DEFAULT_INPUT = "directory.csdl.xml";
-    // const string DEFAULT_INPUT = "example89.csdl.xml";
+    const string DEFAULT_INPUT = "../data/directory.csdl.xml";
+    // const string DEFAULT_INPUT = "../data/example89.csdl.xml";
 
 
     public string InputFile { get; private set; } = null!;
