@@ -7,7 +7,6 @@ class Program
         var args = Args.Parse();
 
 
-
         using var reader = XmlReader.Create(args.InputFile);
         if (!CsdlReader.TryParse(reader, out var model, out var errors))
         {

@@ -117,18 +117,23 @@ public class ModelAnalyzer
         var node = new Node(segment, collectionType);
         visited = visited.Add((segment, collectionType));
 
-        if (!(collectionType.ElementType.Definition is IEdmEntityType elementType))
+        if (collectionType.ElementType.Definition is not IEdmEntityType elementType)
         {
-            throw new NotSupportedException("IEdmCollectionType's element type is not a entity type");
+            // throw new NotSupportedException($"IEdmCollectionType's element type is not a entity type: {collectionType.ElementType.Definition}");
+            // intentionally left blank. A collection of primitive or complex types does not add new 
+            // path segments
         }
-
-        var keys = elementType.Key();
-        if (!keys.TryGetSingle(out var key))
+        else
         {
-            throw new NotSupportedException("multipart keys are not supported");
-        }
 
-        node.Add(UnfoldStructuredType($"{{{key.Name}}}", elementType, visited));
+            var keys = elementType.Key();
+            if (!keys.TryGetSingle(out var key))
+            {
+                throw new NotSupportedException("multipart keys are not supported");
+            }
+
+            node.Add(UnfoldStructuredType($"{{{key.Name}}}", elementType, visited));
+        }
 
         return node;
     }
